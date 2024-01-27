@@ -100,7 +100,7 @@ func TestSetAddress(t *testing.T) {
 	// получите добавленную посылку и убедитесь, что адрес обновился
 	testParcel, err := store.Get(parcelId)
 	require.NoError(t, err, "test get no error")
-	require.Equal(t, testParcel.Address, newAddress, "test address is updated")
+	require.Equal(t, newAddress, testParcel.Address, "test address is updated")
 }
 
 // TestSetStatus проверяет обновление статуса
@@ -132,7 +132,7 @@ func TestSetStatus(t *testing.T) {
 	// получите добавленную посылку и убедитесь, что статус обновился
 	testParcel, err := store.Get(parcelId)
 	require.NoError(t, err, "test get no error")
-	require.Equal(t, testParcel.Status, ParcelStatusSent, "test status is updated")
+	require.Equal(t, ParcelStatusSent, testParcel.Status, "test status is updated")
 }
 
 // TestGetByClient проверяет получение посылок по идентификатору клиента
@@ -178,7 +178,7 @@ func TestGetByClient(t *testing.T) {
 	// убедитесь в отсутствии ошибки
 	require.NoError(t, err, "Test get no error")
 	// убедитесь, что количество полученных посылок совпадает с количеством добавленных
-	require.Equal(t, len(storedParcels), len(parcels))
+	require.Equal(t, len(parcels), len(storedParcels))
 	// check
 	for _, parcel := range storedParcels {
 		// в parcelMap лежат добавленные посылки, ключ - идентификатор посылки, значение - сама посылка
@@ -186,9 +186,6 @@ func TestGetByClient(t *testing.T) {
 		// убедитесь, что значения полей полученных посылок заполнены верно
 		p, ok := parcelMap[parcel.Number]
 		require.True(t, ok, "test found by id")
-		require.Equal(t, p.Client, parcel.Client, "Test client is equal")
-		require.Equal(t, p.Status, p.Status, "Test status is equal")
-		require.Equal(t, p.Address, p.Address, "Test address is equal")
-		require.Equal(t, p.CreatedAt, p.CreatedAt, "Test createdAt is qyual")
+		require.Equal(t, p, parcel, "test parcel is equal")
 	}
 }

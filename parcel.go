@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"errors"
 )
 
 type ParcelStore struct {
@@ -70,13 +69,13 @@ func (s ParcelStore) GetByClient(client int) ([]Parcel, error) {
 		p := Parcel{}
 		err := rows.Scan(&p.Number, &p.Client, &p.Status, &p.Address, &p.CreatedAt)
 		if err != nil {
-			return res, err
+			return nil, err
 		}
 		res = append(res, p)
 	}
 
 	if err := rows.Err(); err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil
@@ -98,19 +97,7 @@ func (s ParcelStore) SetStatus(number int, status string) error {
 func (s ParcelStore) SetAddress(number int, address string) error {
 	// реализуйте обновление адреса в таблице parcel
 	// менять адрес можно только если значение статуса registered
-	var currentStatus string
-	err := s.db.QueryRow("SELECT status FROM parcel WHERE number = :number",
-		sql.Named("number", number)).Scan(&currentStatus)
-
-	if err != nil {
-		return err
-	}
-
-	if currentStatus != ParcelStatusRegistered {
-		return errors.New("can not update status. status is not equal 'regisrered'")
-	}
-
-	_, err = s.db.Exec("UPDATE parcel SET address = :address WHERE number = :number",
+	_, err := s.db.Exec("UPDATE parcel SET address = :address WHERE number = :number AND status = 'registered'",
 		sql.Named("address", address),
 		sql.Named("number", number))
 
@@ -124,19 +111,8 @@ func (s ParcelStore) SetAddress(number int, address string) error {
 func (s ParcelStore) Delete(number int) error {
 	// реализуйте удаление строки из таблицы parcel
 	// удалять строку можно только если значение статуса registered
-	var currentStatus string
-	err := s.db.QueryRow("SELECT status FROM parcel WHERE number = :number",
-		sql.Named("number", number)).Scan(&currentStatus)
-
-	if err != nil {
-		return err
-	}
-
-	if currentStatus != ParcelStatusRegistered {
-		return errors.New("can not delete status. status is not equal 'regisrered'")
-	}
-
-	_, err = s.db.Exec("DELETE FROM parcel WHERE number = :number", sql.Named("number", number))
+	_, err := s.db.Exec("DELETE FROM parcel WHERE number = :number AND status = 'registered'",
+		sql.Named("number", number))
 
 	if err != nil {
 		return err
