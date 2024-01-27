@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -35,10 +34,7 @@ func TestAddGetDelete(t *testing.T) {
 	// настройте подключение к БД
 
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	require.NoError(t, err)
 	defer db.Close()
 
 	store := NewParcelStore(db)
@@ -56,6 +52,10 @@ func TestAddGetDelete(t *testing.T) {
 	// проверьте, что значения всех полей в полученном объекте совпадают со значениями полей в переменной parcel
 	testParcel, err := store.Get(parcelId)
 	require.NoError(t, err, "test get no error")
+
+	// ниже оставил без require.Equals(t, parcel, testparsell)
+	//потому что у parсell нет значиния number и тест падает на сравнеии этого поля у testparcell
+
 	require.Equal(t, testParcel.Client, parcel.Client, "Test parcel.Client")
 	require.Equal(t, testParcel.Status, parcel.Status, "Test parcel.Status")
 	require.Equal(t, testParcel.Address, parcel.Address, "Test parcel.Address")
@@ -68,7 +68,7 @@ func TestAddGetDelete(t *testing.T) {
 	require.NoError(t, err, "test delete no error")
 
 	_, err = store.Get(parcelId)
-	require.Error(t, err, sql.ErrNoRows, "test get with error")
+	require.ErrorIs(t, err, sql.ErrNoRows, "test get with error")
 }
 
 // TestSetAddress проверяет обновление адреса
@@ -76,10 +76,7 @@ func TestSetAddress(t *testing.T) {
 	// prepare
 	// настройте подключение к БД
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	require.NoError(t, err)
 	defer db.Close()
 
 	store := NewParcelStore(db)
@@ -111,10 +108,7 @@ func TestSetStatus(t *testing.T) {
 	// preparego
 	// настройте подключение к БД
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	require.NoError(t, err)
 	defer db.Close()
 
 	store := NewParcelStore(db)
@@ -144,10 +138,7 @@ func TestGetByClient(t *testing.T) {
 	// prepare
 	// настройте подключение к БД
 	db, err := sql.Open("sqlite", "tracker.db")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	require.NoError(t, err)
 	defer db.Close()
 
 	store := NewParcelStore(db)
