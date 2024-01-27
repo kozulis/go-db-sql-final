@@ -51,15 +51,10 @@ func TestAddGetDelete(t *testing.T) {
 	// получите только что добавленную посылку, убедитесь в отсутствии ошибки
 	// проверьте, что значения всех полей в полученном объекте совпадают со значениями полей в переменной parcel
 	testParcel, err := store.Get(parcelId)
+	parcel.Number = testParcel.Number
+
 	require.NoError(t, err, "test get no error")
-
-	// ниже оставил без require.Equals(t, parcel, testparsell)
-	//потому что у parсell нет значиния number и тест падает на сравнеии этого поля у testparcell
-
-	require.Equal(t, testParcel.Client, parcel.Client, "Test parcel.Client")
-	require.Equal(t, testParcel.Status, parcel.Status, "Test parcel.Status")
-	require.Equal(t, testParcel.Address, parcel.Address, "Test parcel.Address")
-	require.Equal(t, testParcel.CreatedAt, parcel.CreatedAt, "Test parcel.CreatedAt")
+	require.Equal(t, parcel, testParcel, "Test parcel equals")
 
 	// delete
 	// удалите добавленную посылку, убедитесь в отсутствии ошибки
