@@ -108,7 +108,7 @@ func TestSetAddress(t *testing.T) {
 
 // TestSetStatus проверяет обновление статуса
 func TestSetStatus(t *testing.T) {
-	// prepare
+	// preparego
 	// настройте подключение к БД
 	db, err := sql.Open("sqlite", "tracker.db")
 	if err != nil {
